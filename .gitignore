@@ -1,0 +1,10 @@
+# Ignore environment folder
+env/
+
+# Ignore large audio datasets
+Audio_Speech_Actors_01-24/
+Noise1.wav
+Noiseless2.wav
+
+# Ignore notebook checkpoints
+.ipynb_checkpoints/
