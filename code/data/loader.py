@@ -71,7 +71,19 @@ class DAICWOZLoader:
     
     def find_feature_files(self, pid):
         """Return dict of paths to feature files for a participant."""
+        # Try both {pid} and {pid}_P directory names
         session_dir = os.path.join(self.raw_dir, str(pid))
+        if not os.path.isdir(session_dir):
+            session_dir = os.path.join(self.raw_dir, f"{pid}_P")
+        if not os.path.isdir(session_dir):
+            return {
+                "covarep": None,
+                "formant": None,
+                "au": None,
+                "gaze": None,
+                "pose": None,
+                "landmarks": None,
+            }
 
         feats = {
             "covarep": None,
@@ -82,36 +94,60 @@ class DAICWOZLoader:
             "landmarks": None,
         }
 
-        if not os.path.isdir(session_dir):
-            return feats
-
-        # Look inside COVAREP + FORMANT
+        # Look for COVAREP and FORMANT in subdirectories first
         covarep_dir = os.path.join(session_dir, "COVAREP")
         if os.path.isdir(covarep_dir):
             for f in os.listdir(covarep_dir):
                 if f.endswith(".csv"):
                     feats["covarep"] = os.path.join(covarep_dir, f)
+                    break
+        else:
+            # Look for COVAREP files directly in session directory
+            for f in os.listdir(session_dir):
+                if "covarep" in f.lower() and f.endswith(".csv"):
+                    feats["covarep"] = os.path.join(session_dir, f)
+                    break
 
         formant_dir = os.path.join(session_dir, "FORMANT")
         if os.path.isdir(formant_dir):
             for f in os.listdir(formant_dir):
                 if f.endswith(".csv"):
                     feats["formant"] = os.path.join(formant_dir, f)
+                    break
+        else:
+            # Look for FORMANT files directly in session directory
+            for f in os.listdir(session_dir):
+                if "formant" in f.lower() and f.endswith(".csv"):
+                    feats["formant"] = os.path.join(session_dir, f)
+                    break
 
-        # Look inside OpenFace folder
+        # Look for OpenFace files (CLNF format: *_CLNF_AUs.txt, *_CLNF_gaze.txt, etc.)
+        # First try openface subdirectory
         openface_dir = os.path.join(session_dir, "openface")
         if os.path.isdir(openface_dir):
             for f in os.listdir(openface_dir):
                 name = f.lower()
                 fpath = os.path.join(openface_dir, f)
-
-                if "au" in name:
+                if "au" in name and (name.endswith(".txt") or name.endswith(".csv")):
                     feats["au"] = fpath
-                elif "gaze" in name:
+                elif "gaze" in name and (name.endswith(".txt") or name.endswith(".csv")):
                     feats["gaze"] = fpath
-                elif "pose" in name:
+                elif "pose" in name and (name.endswith(".txt") or name.endswith(".csv")):
                     feats["pose"] = fpath
-                elif "landmark" in name or "points" in name:
+                elif ("landmark" in name or "points" in name) and (name.endswith(".txt") or name.endswith(".csv")):
+                    feats["landmarks"] = fpath
+        else:
+            # Look for CLNF files directly in session directory
+            for f in os.listdir(session_dir):
+                name = f.lower()
+                fpath = os.path.join(session_dir, f)
+                if "clnf_aus" in name or ("au" in name and name.endswith(".txt")):
+                    feats["au"] = fpath
+                elif "clnf_gaze" in name or ("gaze" in name and name.endswith(".txt")):
+                    feats["gaze"] = fpath
+                elif "clnf_pose" in name or ("pose" in name and name.endswith(".txt")):
+                    feats["pose"] = fpath
+                elif ("landmark" in name or "points" in name) and name.endswith(".txt"):
                     feats["landmarks"] = fpath
 
         return feats

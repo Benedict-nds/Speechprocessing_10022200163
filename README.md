@@ -91,27 +91,42 @@ pip install -r requirements.txt
 
 ### Running the Pipeline
 
-The project follows a simple step-by-step workflow:
+**Quick Start - Run Everything:**
+```bash
+# Run the complete pipeline (download → training → analysis)
+python run_pipeline.py --all
+
+# Check what's already completed
+python run_pipeline.py --check-only
+```
+
+**Manual Step-by-Step Execution:**
+
+Alternatively, run scripts individually in order:
 
 ```bash
-# Step 1: Prepare audio data
-python scripts/01_prepare_data.py --dataset DAIC-WOZ
+# Step 1: Prepare metadata
+python scripts/01_prepare_data.py
 
-# Step 2: Extract acoustic-prosodic features
+# Step 2: Extract and aggregate features
 python scripts/02_extract_features.py
 
-# Step 3: Train classical ML models
-python scripts/03_train_classical.py --model random_forest
+# Step 3: Train models
+python scripts/03_train_classical.py    # Random Forest
+python scripts/03_train_xgboost.py      # XGBoost
+python scripts/04_train_neural.py       # Neural Networks (PyTorch)
 
-# Step 4: Train neural network models
-python scripts/04_train_neural.py --model cnn_lstm
-
-# Step 5: Evaluate all models
-python scripts/05_evaluate.py
-
-# Step 6: Identify vocal biomarkers
+# Step 4: Identify biomarkers (requires trained model)
 python scripts/06_identify_biomarkers.py
+
+# Step 5: Temporal stability analysis (optional)
+python scripts/08_temporal_stability.py
+
+# Step 6: Cross-lingual analysis (optional, requires LMIC data)
+python scripts/09_cross_lingual_analysis.py
 ```
+
+See `scripts/README.md` for detailed pipeline runner options.
 
 ### Using Notebooks
 

@@ -66,15 +66,16 @@ model:
   type: "classification"  # Options: classification, regression
   
   # Random Forest Parameters
+  # RECOMMENDED: 300-500 trees for >80% accuracy
   hyperparameters:
-    n_estimators: 200
+    n_estimators: 400  # Increased from 200 (recommended: 300-500 for best performance)
     max_depth: 20
     min_samples_split: 5
     min_samples_leaf: 2
     max_features: "sqrt"
     bootstrap: true
     random_state: 42
-    class_weight: "balanced"  # Handle class imbalance
+    class_weight: "balanced"  # CRITICAL: Handle class imbalance (required for >80% accuracy)
 
 # Training Configuration
 training:

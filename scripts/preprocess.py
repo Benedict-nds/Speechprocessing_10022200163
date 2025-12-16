@@ -50,13 +50,13 @@ def main():
     # Count errors
     errors = [r for r in results if r['errors']]
     if errors:
-        print(f"\n⚠️  {len(errors)} participants had errors:")
+        print(f"\n  {len(errors)} participants had errors:")
         for r in errors[:5]:  # Show first 5
             print(f"  - Participant {r['participant_id']}: {r['errors']}")
         if len(errors) > 5:
             print(f"  ... and {len(errors) - 5} more")
     
-    print("\n✅ Preprocessing complete!")
+    print("\n Preprocessing complete!")
     print("=" * 60)
 
 

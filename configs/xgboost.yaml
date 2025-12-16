@@ -1,0 +1,58 @@
+# Speech2Health XGBoost Configuration
+
+# Dataset Configuration
+dataset:
+  name: "DAIC-WOZ"
+  data_dir: "data/raw"
+  processed_dir: "data/processed"
+  features_dir: "data/features"
+
+# Model Configuration
+model:
+  name: "xgboost"
+  type: "classification"
+  
+  # XGBoost Parameters
+  hyperparameters:
+    n_estimators: 300  # Similar to Random Forest
+    max_depth: 8  # XGBoost typically uses shallower trees
+    learning_rate: 0.05  # Lower learning rate for better generalization
+    min_child_weight: 5  # Regularization
+    subsample: 0.8  # Row subsampling
+    colsample_bytree: 0.8  # Column subsampling
+    reg_alpha: 0.1  # L1 regularization
+    reg_lambda: 1.0  # L2 regularization
+    gamma: 0.1  # Minimum loss reduction
+    scale_pos_weight: null  # Will be set based on class imbalance
+    random_state: 42
+    n_jobs: -1
+
+# Training Configuration
+training:
+  cv:
+    method: "stratified_kfold"
+    n_splits: 5
+    shuffle: true
+    random_state: 42
+  
+  use_smote: true  # Apply SMOTE for class balancing
+
+# Feature Selection (same as Random Forest)
+feature_selection:
+  enabled: true
+  aggressive: true  # Use aggressive feature selection
+
+# Evaluation Configuration
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - roc_auc
+
+# Reproducibility
+reproducibility:
+  random_seed: 42
+
+

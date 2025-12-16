@@ -477,13 +477,4 @@ This document provides a detailed implementation guide for the Speech2Health pro
 - **Biomarkers**: Identify 5-10 significant vocal biomarkers
 - **Interpretability**: Generate explainable predictions
 
-## Next Steps
 
-1. Set up development environment
-2. Download and preprocess datasets
-3. Extract comprehensive features
-4. Train classical ML models
-5. Train neural network models
-6. Identify biomarkers
-7. Evaluate generalization
-8. Document findings and write technical report

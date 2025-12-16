@@ -1,0 +1,28 @@
+# Speech2Health Neural Network Configuration (PyTorch)
+
+# Model Configuration
+model_type: "simple_dnn"  # Options: simple_dnn, cnn_lstm, lstm_only
+
+# Training Configuration
+learning_rate: 0.0005  # Reduced from 0.001 for better stability
+epochs: 50
+batch_size: 16
+
+training:
+  cv:
+    method: "stratified_kfold"
+    n_splits: 5
+    shuffle: true
+    random_state: 42
+
+# Regularization (Strong regularization for small datasets)
+dropout_rate: 0.7  # Increased from 0.4 - stronger dropout to prevent overfitting
+weight_decay: 0.01  # L2 regularization (weight decay) for Adam optimizer
+use_batch_norm: true
+pos_weight: null  # Will be auto-calculated from class distribution if null
+
+# Reproducibility
+random_seed: 42
+framework: "pytorch"  # Using PyTorch instead of TensorFlow
+
+

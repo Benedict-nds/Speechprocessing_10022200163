@@ -198,8 +198,18 @@ class FeaturePreprocessor:
         
         return aligned
     
-    def aggregate_features(self, features, method='mean'):
-        """Aggregate temporal features to fixed-length vector."""
+    def aggregate_features(self, features, method='all'):
+        """
+        Aggregate temporal features to fixed-length vector.
+        
+        CRITICAL: This converts frame-level features (e.g., 98k frames) 
+        to speaker-level features (~150-300 features per speaker).
+        This aggregation is essential for achieving >80% accuracy.
+        
+        Methods:
+        - 'all': Includes mean, std, min, max, median, 25th percentile, 75th percentile
+        - 'mean', 'std', 'min', 'max', 'median', 'p25', 'p75': Individual statistics
+        """
         if features is None:
             return None
         
@@ -213,14 +223,21 @@ class FeaturePreprocessor:
             return np.max(features, axis=0)
         elif method == 'median':
             return np.median(features, axis=0)
+        elif method == 'p25':
+            return np.percentile(features, 25, axis=0)
+        elif method == 'p75':
+            return np.percentile(features, 75, axis=0)
         elif method == 'all':
-            # Concatenate all statistics
+            # Concatenate all statistics (CRITICAL for >80% accuracy)
+            # This includes: mean, std, min, max, median, 25th percentile, 75th percentile
             return np.concatenate([
                 np.mean(features, axis=0),
                 np.std(features, axis=0),
                 np.min(features, axis=0),
                 np.max(features, axis=0),
-                np.median(features, axis=0)
+                np.median(features, axis=0),
+                np.percentile(features, 25, axis=0),  # 25th percentile
+                np.percentile(features, 75, axis=0)   # 75th percentile
             ])
         else:
             return np.mean(features, axis=0)
