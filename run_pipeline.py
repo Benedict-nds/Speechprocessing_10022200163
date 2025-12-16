@@ -83,6 +83,9 @@ Examples:
   # Run everything
   python run_pipeline.py --all
 
+  # Skip data download (if already done)
+  python run_pipeline.py --all --skip-download
+
   # Run only model training
   python run_pipeline.py --step training
 
@@ -104,6 +107,12 @@ Examples:
         "--step",
         choices=["download", "prepare", "features", "training", "biomarkers", "temporal", "crosslingual"],
         help="Run a specific step only"
+    )
+    
+    parser.add_argument(
+        "--skip-download",
+        action="store_true",
+        help="Skip data download step"
     )
     
     parser.add_argument(
@@ -157,7 +166,11 @@ Examples:
     steps = []
     step_num = 0
     
-    # Step 1: Data Preparation
+    # Step 1: Data Download
+    if run_full and not args.skip_download:
+        steps.append(("download", "Data Download", "datadownload.py", False))
+    
+    # Step 2: Data Preparation
     if run_full or args.step == "prepare":
         steps.append(("prepare", "Data Preparation", "scripts/01_prepare_data.py", True))
     

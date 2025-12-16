@@ -96,6 +96,9 @@ pip install -r requirements.txt
 # Run the complete pipeline (download → training → analysis)
 python run_pipeline.py --all
 
+# Skip data download if already done
+python run_pipeline.py --all --skip-download
+
 # Check what's already completed
 python run_pipeline.py --check-only
 ```
@@ -105,24 +108,27 @@ python run_pipeline.py --check-only
 Alternatively, run scripts individually in order:
 
 ```bash
-# Step 1: Prepare metadata
+# Step 1: Download data (if needed)
+python datadownload.py
+
+# Step 2: Prepare metadata
 python scripts/01_prepare_data.py
 
-# Step 2: Extract and aggregate features
+# Step 3: Extract and aggregate features
 python scripts/02_extract_features.py
 
-# Step 3: Train models
+# Step 4: Train models
 python scripts/03_train_classical.py    # Random Forest
 python scripts/03_train_xgboost.py      # XGBoost
 python scripts/04_train_neural.py       # Neural Networks (PyTorch)
 
-# Step 4: Identify biomarkers (requires trained model)
+# Step 5: Identify biomarkers (requires trained model)
 python scripts/06_identify_biomarkers.py
 
-# Step 5: Temporal stability analysis (optional)
+# Step 6: Temporal stability analysis (optional)
 python scripts/08_temporal_stability.py
 
-# Step 6: Cross-lingual analysis (optional, requires LMIC data)
+# Step 7: Cross-lingual analysis (optional, requires LMIC data)
 python scripts/09_cross_lingual_analysis.py
 ```
 
